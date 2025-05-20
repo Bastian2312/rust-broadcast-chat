@@ -20,6 +20,11 @@ Untuk mengubah port yang digunakan pada aplikasi chat ini, diperlukan modifikasi
 
 ## Small changes, add IP and Port
 
+![alt text](./images/ninth.png)
+![alt text](./images/tenth.png)
+![alt text](./images/eleventh.png)
+![alt text](./images/twelveth.png)
+
 Saya melakukan perubahan pada *server side* karena server sudah melacak pesan mana yang sesuai dengan alamat klien tertentu. Ketika klien pertama kali terhubung, server membuat sebuah *thread* asinkronus baru yang bertugas menangani *message streams* dari klien tersebut. Setiap koneksi klien mendapatkan *thread* dan *handler* terpisah dengan informasi alamat socket yang disimpan dalam parameter `addr`.
 
 Dengan memodifikasi baris `bcast_tx.send(text.into())?;` menjadi `bcast_tx.send(format!("{addr:?} {text:?}"))?;`, saya memanfaatkan parameter `addr` yang sudah tersedia untuk menyisipkan informasi alamat pengirim pada pesan yang di-broadcast. Hal ini terlihat jelas pada gambar, dimana setiap pesan yang diterima klien menampilkan alamat IP dan port pengirim.
