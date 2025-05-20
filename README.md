@@ -17,3 +17,9 @@ Aplikasi ini mendemonstrasikan penggunaan asynchronous programming di Rust mengg
 ![alt text](./images/eighth.png)
 
 Untuk mengubah port yang digunakan pada aplikasi chat ini, diperlukan modifikasi pada dua file yang berbeda karena komunikasi terjadi antara dua sisi: server dan client. Pada file `server.rs`, port diubah pada baris kode `TcpListener::bind("127.0.0.1:8080").await?;`. Sedangkan pada sisi client, modifikasi dilakukan pada file `client.rs` di baris `ClientBuilder::from_uri(Uri::from_static("ws://127.0.0.1:8080"))`. Kedua file tersebut menggunakan protokol WebSocket yang sama, ditunjukkan dengan penggunaan URI dengan skema "ws://" pada client dan implementasi WebSocket server di file server.rs melalui `tokio_websockets` crate. WebSocket protocol memungkinkan komunikasi dua arah (bidirectional) secara real-time antara server dan client, yang merupakan teknologi ideal untuk aplikasi chat.
+
+## Small changes, add IP and Port
+
+Saya melakukan perubahan pada *server side* karena server sudah melacak pesan mana yang sesuai dengan alamat klien tertentu. Ketika klien pertama kali terhubung, server membuat sebuah *thread* asinkronus baru yang bertugas menangani *message streams* dari klien tersebut. Setiap koneksi klien mendapatkan *thread* dan *handler* terpisah dengan informasi alamat socket yang disimpan dalam parameter `addr`. 
+
+Dengan memodifikasi baris `bcast_tx.send(text.into())?;` menjadi `bcast_tx.send(format!("{addr:?} {text:?}"))?;`, saya memanfaatkan parameter `addr` yang sudah tersedia untuk menyisipkan informasi alamat pengirim pada pesan yang di-broadcast. Hal ini memungkinkan semua klien yang terhubung dapat melihat dengan jelas dari mana pesan berasal.
